@@ -33,21 +33,20 @@
 
 <body>
     <div id="graphic"></div>
-    <button onclick="transition()">Update</button>
-
     <script src="http://d3js.org/queue.v1.min.js"></script>
     <script src="data0.js"></script>
     <script src="data1.js"></script>
 
     
     <script>
+
+    function drawGraphic(){
+
     var width = $(window).width(),
         height = $(window).height();
 
-   
-
-    var n = 2, // number of candidates
-    m = 5, // number of key debates
+    var n = 13, // number of candidates
+    m = 16, // number of key debates
 
     stack = d3.layout.stack()
               .offset("wiggle")
@@ -63,10 +62,12 @@ var y = d3.scale.linear()
 .domain([0, d3.max(layers, function(layer) { return d3.max(layer.values, function(d) { return d.y0 + d.y; }); })])
     .range([height, 0]);
 
+//assign the color pallete as a random color from this sequential colors
 var color = d3.scale.linear() 
-    .range(["#aad", "#556"]); 
+    .range(["#ffffcc", "#800026"]); 
  
 var area = d3.svg.area()
+    .interpolate("monotone")
     .x(function(d) { return x(d.x); })
     .y0(function(d) { return y(d.y0); })
     .y1(function(d) { return y(d.y0 + d.y); });
@@ -77,17 +78,35 @@ var svg = d3.select("#graphic").append("svg")
 
 svg.selectAll("path")
     .data(layers)
-  .enter().append("path")
-    .attr("d", function(d) { return area(d.values); })
-    .on("click", function (d, i) {
-      transition(data1);  
-    }) 
+    .enter().append("path")
+    .attr("d", function(d) {return area(d.values); })
+    .on("click", transition)
     .style("fill", function() { return color(Math.random()); })
-  .append("title")
-    .text(function(d) { return d.name; });
+    .style("opacity",.8);
+
+// svg.selectAll("path")
+//     .append("text")
+//     .text(function(d){
+//       return d.name;
+//     })
+//     .attr("x",function(d){return d.y;})
+//     .attr("y",function(d){return d.x;})
+//     .attr("text-anchor","middle")
+//     .style("fill", "white")
+//     .attr("z-index",99);
+    // .append("title")
+    // .text(function(d) { return d.name; })
+    // .attr("x",15)
+    // .attr("y",10);
  
-function transition(data) {
+function transition() {
+  var data = data1;
+  data1 = data0;
+  data0 = data;
+
   var layers = stack(data);  
+
+
   y = d3.scale.linear()   
                 .domain([0, d3.max(layers, function(layer) { return d3.max(layer.values, function(d) { return d.y0 + d.y; }); })])
                 .range([height, 0]);
@@ -96,20 +115,22 @@ function transition(data) {
         .data(layers);
     
   p.exit().remove();
-  // p.select("title").text(function(d) { return d.name; });
+  p.select("title").text(function(d) { return d.name; });
 
   p.enter().append("path")
     .attr("d", function(d) { return area(d.values); })
     .style("fill", function() { return color(Math.random()); })
-  .append("title")
+    .append("title")
     .text(function(d) { return d.name; });
   
   p.transition()  
         .duration(1000)
         .attr("d", function(d) { return area(d.values); });
   
-}
+  }
 
+
+}
  
 
 </script>
@@ -117,7 +138,10 @@ function transition(data) {
     
 </body>
 <script>
-// drawGraphic()
+drawGraphic();
+
+
+
 </script>
 
 </html>
