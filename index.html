@@ -20,6 +20,7 @@
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         margin: auto;
         position: relative;
+        font-size: 12px;
     }
     
     button {
@@ -33,7 +34,9 @@
 
 <body>
     <div id="graphic"></div>
-    <script src="http://d3js.org/queue.v1.min.js"></script>
+<!--      
+    <script src="http://d3js.org/queue.v1.min.js"></script> 
+    --> 
     <script src="data0.js"></script>
     <script src="data1.js"></script>
 
@@ -78,26 +81,28 @@ var svg = d3.select("#graphic").append("svg")
 
 svg.selectAll("path")
     .data(layers)
-    .enter().append("path")
+    .enter()
+    .append("path")
     .attr("d", function(d) {return area(d.values); })
     .on("click", transition)
     .style("fill", function() { return color(Math.random()); })
     .style("opacity",.8);
 
-// svg.selectAll("path")
-//     .append("text")
-//     .text(function(d){
-//       return d.name;
-//     })
-//     .attr("x",function(d){return d.y;})
-//     .attr("y",function(d){return d.x;})
-//     .attr("text-anchor","middle")
-//     .style("fill", "white")
-//     .attr("z-index",99);
-    // .append("title")
-    // .text(function(d) { return d.name; })
-    // .attr("x",15)
-    // .attr("y",10);
+
+
+svg.selectAll("title")
+    .data(layers)
+    .enter()
+	.append("title")
+	.text(function(d){
+		return d.name;
+	})
+    .attr("text-anchor","middle")
+    .attr("x", 10)
+    .attr("y", 20)
+    .attr("fill","black");
+
+
  
 function transition() {
   var data = data1;
